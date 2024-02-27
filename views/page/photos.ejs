@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<%- include('../sample/header.ejs') %>
+<style>
+  
+    .container {
+      display: flex;
+      flex-direction: column;
+    
+      justify-content: center;
+      padding: 20px; 
+      box-sizing: border-box; 
+    }
+
+
+ 
+    footer {
+          background-color: #333;
+          color: #fff; 
+          padding: 20px;
+          text-align: center;
+          width: 100%; 
+        }
+        .link {
+            font-size: 18px; /* Adjust font size as needed */
+            color: #007bff; /* Blue color, you can change it to your preferred color */
+            text-decoration: none;
+        }
+
+        .link:hover {
+            color: #0056b3; /* Darker shade of blue on hover */
+        }
+
+   
+  </style>
+<body>
+    
+    <%- include('../sample/navigationbar.ejs') %>
+
+
+    <div class="container">
+    <div class="container1 my-4">
+        <div class="row align-items-center">
+            <div class="col">
+                <div class="fs-1 fw-semibold">Add 3 photos and see yourself detected in camera! </div>
+            </div>
+            <div class="col text-end">
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addPhotosModal">
+                    Add Photos
+                </button>
+            </div>
+           
+        </div>
+    </div>
+
+    <div class="container1 my-4">
+        <div class="row align-items-center">
+            <div class="col">
+                <div class="fs-1 fw-semibold">Photos List</div>
+            </div>
+        </div>
+        <div class="list-group">
+            <% imglist.forEach((img, index) => { %>
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <a class="link"> <%= img %></a> <!-- Changed span to a tag -->
+                    </div>
+                    <div>
+                        <a href="#" class="btn btn-sm btn-outline-secondary editPhotoBtn" data-bs-toggle="modal"  data-img="<%= encodeURIComponent(img) %>"data-bs-target="#editPhotosModal">
+                            Edit
+                        </a>
+                        <a href="/deletePhoto?imageName=<%= encodeURIComponent(img) %>" class="btn btn-sm btn-outline-danger">Delete</a> <!-- Changed delete link to a GET request -->
+                    </div>
+                </div>
+            <% }); %>
+        </div>
+    </div>
+    
+</div>
+
+
+    <div class="modal" id="addPhotosModal" tabindex="-1" aria-labelledby="addPhotosModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addPhotosModalLabel">Add Photos</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="uploadForm" enctype="multipart/form-data" action="/addPhotos" method="POST">
+                        <div class="mb-3">
+                            <label for="directoryName" class="form-label">Directory Name</label>
+                            <input type="text" class="form-control" id="directoryName" name="directoryName" placeholder="Enter directory name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="photo1" class="form-label">Photo 1</label>
+                            <input type="file" class="form-control" id="photo1" name="photos" accept="image/*" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="photo2" class="form-label">Photo 2</label>
+                            <input type="file" class="form-control" id="photo2" name="photos" accept="image/*" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="photo3" class="form-label">Photo 3</label>
+                            <input type="file" class="form-control" id="photo3" name="photos" accept="image/*" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Upload Photos</button>
+                    </form>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="editPhotosModal" tabindex="-1" aria-labelledby="editPhotosModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editPhotosModalLabel">Edit Photos</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editForm" enctype="multipart/form-data" action="/updatePhoto" method="GET">
+                        <div class="mb-3">
+                            <label for="editDirectoryName"  class="form-label">Directory Name</label>
+                            <input type="text" class="form-control" id="editDirectoryName" name="editDirectoryName" placeholder="Enter directory name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editPhoto1" class="form-label">Photo 1</label>
+                            <input type="file" class="form-control" id="editPhoto1" name="editPhotos" accept="image/*" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editPhoto2" class="form-label">Photo 2</label>
+                            <input type="file" class="form-control" id="editPhoto2" name="editPhotos" accept="image/*" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editPhoto3" class="form-label">Photo 3</label>
+                            <input type="file" class="form-control" id="editPhoto3" name="editPhotos" accept="image/*" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Update Photos</button>
+                        
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.querySelectorAll('.editPhotoBtn').forEach(item => {
+             item.addEventListener('click', function(event) {
+                 const button = event.currentTarget;
+                 const img = button.getAttribute('data-img');
+                 
+                 
+                 document.querySelector('#editPhotosModal input[name="editDirectoryName"]').value = img;
+                 
+             });
+         });
+             
+ </script>
+ 
+    <%- include('../sample/footer.ejs') %>
+</body>
+</html>

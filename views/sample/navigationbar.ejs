@@ -1,0 +1,140 @@
+<nav class="navbar navbar-expand-lg navbar-light" style="background-color: rgba(0, 0, 0, 0.1);">
+  <div class="container">
+
+    
+
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarButtonsExample"
+      aria-controls="navbarButtonsExample"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+      style="font-size: 1.5rem;" <!-- Adjust font size as needed -->
+    Menu
+      <i class="fas fa-bars"></i>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarButtonsExample">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link <% if (activePage === 'home') { %>active fw-semibold text-primary<% } %>" href="/">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link <%= activePage === 'detail' ? 'active text-primary fw-semibold' : '' %>" href="/detailed">More info</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link <%= activePage === 'detect' ? 'active text-primary fw-semibold' : '' %>" href="/detect">Face Detection</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link <%= activePage === 'photo' ? 'active text-primary fw-semibold' : '' %>" href="/photos">Add photos!</a>
+        </li>
+        <% if (user) { %>
+          <li class="nav-item">
+            <a class="nav-link <%= activePage === 'history' ? 'active text-primary fw-semibold' : '' %>" href="/history">History</a>
+          </li>
+          <% if(user.is_admin) {%>
+            <li class="nav-item">
+              <a class="nav-link <%= activePage === 'admin' ? 'active text-primary fw-semibold' : '' %>" href="/admin">AdminPanel</a>
+            </li>
+          <% } %>
+        <% } %>
+
+       
+      </ul>
+
+      <div class="dropdown">
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="languageDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+          Language
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="languageDropdown">
+          <li><a class="dropdown-item" href="#" onclick="changeLanguage('eng')">English</a></li>
+          <li><a class="dropdown-item" href="#" onclick="changeLanguage('ru')">Ru</a></li>
+          <li><a class="dropdown-item" href="#" onclick="changeLanguage('fr')">French</a></li>
+        </ul>
+      </div>
+
+
+
+
+      <div class="d-flex align-items-center">
+        <% if (!user) { %>
+          <% if (activePage === 'login') { %>
+            <a href="/signup" type="button" class="btn btn-primary">
+              Signup 
+            </a>
+          <% } else { %>
+            <a href="/login" type="button" class="btn btn-muted">
+              Login
+            </a>
+            <a href="/signup" type="button" class="btn btn-primary ">
+              Signup
+            </a>
+          <% } %>
+        <% } else { %>
+          <button class="btn btn-primary"><%= user.username %></button>
+          <a href="/logout" type="button" class="btn btn-link me-3 text-decoration-none">
+            Logout
+          </a>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</nav>
+<hr class="m-0 p-0" />
+<script>
+  function changeLanguage(language) {
+    const languageTranslations = {
+      eng: {
+        home: "Home",
+        detail: "More info",
+        detect: "Face Detection",
+        history: "History",
+        admin: "Admin Panel",
+        signup: "Signup",
+        login: "Login",
+        logout: "Logout"
+      },
+      ru: {
+        home: "Главная",
+        detail: "Дополнительно",
+        detect: "Обнаружение лиц",
+        history: "История",
+        admin: "Панель администратора",
+        signup: "Регистрация",
+        login: "Войти",
+        logout: "Выйти"
+      },
+      fr: {
+        home: "Accueil",
+        detail: "Plus d'infos",
+        detect: "Détection de visage",
+        history: "Historique",
+        admin: "Panneau d'administration",
+        signup: "S'inscrire",
+        login: "Se connecter",
+        logout: "Se déconnecter"
+      }
+    };
+
+    const languageLinks = document.querySelectorAll(".nav-link");
+    const userButton = document.querySelector(".btn-primary");
+    const logoutButton = document.querySelector(".btn-link");
+
+    // Update links with translated text
+    languageLinks.forEach(link => {
+      const pageName = link.getAttribute("href").substr(1); // Get the page name from href
+      link.textContent = languageTranslations[language][pageName];
+    });
+
+    // Update user button with translated text
+    userButton.textContent = languageTranslations[language].signup;
+
+    // Update logout button with translated text
+    if (logoutButton) {
+      logoutButton.textContent = languageTranslations[language].logout;
+    }
+  }
+</script>
+

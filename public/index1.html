@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weather App</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.css">
+  <script src="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.js"></script>
+  <script src="index.js"></script>
+  <style>
+    body {
+      background-color: #f5f5f5; 
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      overflow-y: auto; 
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px; 
+      min-height: 100vh;
+      box-sizing: border-box; 
+    }
+
+    #cityInput {
+      width: 300px;
+      margin-bottom: 20px;
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc; 
+    }
+
+    button {
+      background-color: #007bff; 
+      color: #fff;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    #weatherData {
+      margin-top: 20px;
+      padding: 20px;
+      border-radius: 5px;
+      background-color: #fff;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      overflow-y: auto; 
+      max-height: 300px; 
+    }
+
+    #map {
+      margin-top: 20px;
+      width: 100%;
+      max-width: 800px;
+      height: 400px;
+      border-radius: 5px;
+      overflow: hidden; 
+    }
+
+    footer {
+      background-color: #333;
+      color: #fff; 
+      padding: 20px;
+      text-align: center;
+      width: 100%; 
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <input type="text" id="cityInput" placeholder="Enter city name">
+    <button onclick="getWeather()">Get Weather</button>
+    <div id="weatherData"></div>
+    <div id="map"></div>
+  </div>
+
+  <footer>
+    © 2024 Weather App by Asylkhan Ismailov
+  </footer>
+</body>
+</html>

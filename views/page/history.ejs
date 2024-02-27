@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <%- include ('../sample/header.ejs') %>
+    <style>
+        body {
+          background-color: #f5f5f5; 
+          font-family: Arial, sans-serif;
+          margin: 0;
+          padding: 0;
+          overflow-y: auto; 
+        }
+    
+        .container {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          padding: 20px; 
+          box-sizing: border-box; 
+        }
+    
+    
+     
+    
+      
+    
+       
+      </style>
+</head>
+<body>
+    <%- include ('../sample/navigationbar.ejs') %>
+    <div class="container1">
+    
+        <div class="fs-1 mb-3">History</div>
+        <a href="/history/deleteAll" class="btn btn-danger">Delete ALL</a>
+        <% if (logs.length > 0) { %>
+            <% logs.forEach(function(log) { %>
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <p class="card-text"><strong>User id:</strong> <%= log.user %></p>
+                        <p class="card-text"><strong>Created at:</strong> <%= new Date(log.created_at).toLocaleString() %></p>
+                        <p class="card-text"><strong>City:</strong> <%= log.city %></p>
+                        <p class="card-text"><strong>Some Data:</strong> <%= log.data%></p>
+                        <!-- Button to view log details -->
+                        <div class="d-flex justify-content-between">
+                            
+                            <a href="/history/<%= log._id %>/delete" class="btn btn-danger">Delete</a>
+                        </div>
+                    </div>
+                </div>
+            <% }); %>
+        <% } else { %>
+            <p>No logs found.</p>
+        <% } %>
+    </div>
+    
+    
+</body>
+</html>
