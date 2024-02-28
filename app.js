@@ -52,6 +52,13 @@ app.get("/photos", async (req, res) =>{
   const user = await getUser(req.ip)
   const img = await imgCollection.findOne({}); 
   
+  const directoryPath = path.join(__dirname, 'public', 'img');
+  const directories = fs.readdirSync(directoryPath, { withFileTypes: true })
+                        .filter(dirent => dirent.isDirectory())
+                        .map(dirent => dirent.name);
+
+  console.log("Local directories: ", directories)
+
  const imglist = img ? img.imgs : [];
   res.render('page/photos.ejs', {activePage: "photo", user: user ? user : null, error: null, imglist:imglist})
 })
