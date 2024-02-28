@@ -25,31 +25,7 @@ var upload = multer({
   dest: __dirname + '../public/img/',
 })
 
-app.get('/updatePhoto', async (req, res) => {
-  const oldImageName = req.query.oldImageName;
-  const newImageName = req.query.newImageName;
-  console.log(oldImageName)
-  console.log(newImageName)
-  try {
-      // Find the document containing the old image name and update it with the new image name
-      const result = await imgCollection.findOneAndUpdate(
-          { imgs: oldImageName }, // Search criteria
-          { $set: { 'imgs.$': newImageName } }, // Update operation
-          { new: true } // Return the updated document
-      );
 
-      if (result) {
-          console.log(`Updated image name from '${oldImageName}' to '${newImageName}'`);
-          res.redirect('/photos'); // Redirect back to the original page after update
-      } else {
-          console.log(`Image '${oldImageName}' not found in collection`);
-          res.status(404).send(`Image '${oldImageName}' not found in collection`);
-      }
-  } catch (error) {
-      console.error('Error updating image name:', error);
-      res.status(500).send('Error updating image name'); // Send an error response if update fails
-  }
-});
 app.get('/deletePhoto', async (req, res) => {
   const imageName = req.query.imageName;
   try {
@@ -118,7 +94,41 @@ app.post('/addPhotos', upload.array('photos', 3), (req, res) => {
 
  
 });
+app.post('/updatePhoto', upload.array('editPhotos', 3), async (req, res) => {
+  try {
+    console.log(req.body)
+    const oldDirectoryName = req.body.oldDirectoryName;
+    const directoryName = req.body.editDirectoryName;
+    console.log(oldDirectoryName)
+    console.log(directoryName)
+    
+    // Construct old and new directory paths
+    const oldDirectoryPath = path.join(__dirname, 'public', 'img', oldDirectoryName);
+    const newDirectoryPath = path.join(__dirname, 'public', 'img', directoryName);
 
+    // Rename the directory if the name is changed
+    if (oldDirectoryName !== directoryName) {
+      fs.renameSync(oldDirectoryPath, newDirectoryPath);
+    }
+
+    // Move uploaded files to the new directory
+    req.files.forEach(file => {
+      fs.renameSync(file.path, path.join(newDirectoryPath, file.originalname));
+    });
+
+    // Update the directory name in the database
+    await imgCollection.updateOne(
+      { imgs: oldDirectoryName }, // Find the document containing the old directory name
+      { $set: { "imgs.$": directoryName } } // Update the directory name in the imgs array
+    );
+
+    console.log('Photos updated successfully');
+    res.redirect("/photos");
+  } catch (error) {
+    console.error('Error updating photos:', error);
+    res.status(500).send('Error updating photos');
+  }
+});
 
 
 
@@ -411,6 +421,7 @@ app.post("/admin/addUser", async (req, res) => {
   res.status(202).redirect("/admin");
 });
 app.post('/admin/updateUser', async (req, res) => {
+  console.log(req.body)
   try {
       const { userId, username, email, password } = req.body;
     

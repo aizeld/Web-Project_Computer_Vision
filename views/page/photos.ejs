@@ -71,7 +71,7 @@
                         <a class="link"> <%= img %></a> <!-- Changed span to a tag -->
                     </div>
                     <div>
-                        <a href="#" class="btn btn-sm btn-outline-secondary editPhotoBtn" data-bs-toggle="modal"  data-img="<%= encodeURIComponent(img) %>"data-bs-target="#editPhotosModal">
+                        <a class="btn btn-sm btn-outline-secondary editPhotoBtn" data-bs-toggle="modal"  data-img="<%= encodeURIComponent(img) %>"data-bs-target="#editPhotosModal">
                             Edit
                         </a>
                         <a href="/deletePhoto?imageName=<%= encodeURIComponent(img) %>" class="btn btn-sm btn-outline-danger">Delete</a> <!-- Changed delete link to a GET request -->
@@ -95,7 +95,7 @@
                     <form id="uploadForm" enctype="multipart/form-data" action="/addPhotos" method="POST">
                         <div class="mb-3">
                             <label for="directoryName" class="form-label">Directory Name</label>
-                            <input type="text" class="form-control" id="directoryName" name="directoryName" placeholder="Enter directory name" required>
+                            <input type="text" class="form-control" id="directoryNamee" name="directoryName" placeholder="Enter directory name" required>
                         </div>
                         <div class="mb-3">
                             <label for="photo1" class="form-label">Photo 1</label>
@@ -125,9 +125,11 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="editForm" enctype="multipart/form-data" action="/updatePhoto" method="GET">
+                    <form id="editForm" enctype="multipart/form-data" action="/updatePhoto" method="POST">
                         <div class="mb-3">
-                            <label for="editDirectoryName"  class="form-label">Directory Name</label>
+                            <label for="editDirectoryName" class="form-label">Directory Name</label>
+                            <input type="text" class="form-control" id="oldDirectoryName" name="oldDirectoryName" placeholder="Enter directory name" readonly style="font-size: 12px; pointer-events: none; background-color: #f5f5f5;">
+
                             <input type="text" class="form-control" id="editDirectoryName" name="editDirectoryName" placeholder="Enter directory name" required>
                         </div>
                         <div class="mb-3">
@@ -143,7 +145,6 @@
                             <input type="file" class="form-control" id="editPhoto3" name="editPhotos" accept="image/*" required>
                         </div>
                         <button type="submit" class="btn btn-primary">Update Photos</button>
-                        
                     </form>
                 </div>
             </div>
@@ -158,7 +159,7 @@
                  
                  
                  document.querySelector('#editPhotosModal input[name="editDirectoryName"]').value = img;
-                 
+                 document.querySelector('#editPhotosModal input[name="oldDirectoryName"]').value  = img;
              });
          });
              
