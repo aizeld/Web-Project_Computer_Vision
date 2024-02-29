@@ -142,14 +142,15 @@ app.get("/detect", async (req, res)=>{
   const img = await imgCollection.findOne({}); 
   
  let imglist = img ? img.imgs : []
- if (imglist.length === 0) {
-  imglist = ["Sozdatel"];
-}
+ 
 const directoryPath = path.join(__dirname, 'public', 'img');
   const directories = fs.readdirSync(directoryPath, { withFileTypes: true })
                         .filter(dirent => dirent.isDirectory())
                         .map(dirent => dirent.name);
-imglist = imglist.filter(directory => directories.includes(directory));//смотрю если директорий случайно исчезли из-за рендера то удаляю из монго чтобы нейронка работала без траблов
+imglist = imglist.filter(directory => directories.includes(directory));
+if (imglist.length === 0) {
+  imglist = ["Sozdatel"];
+}//смотрю если директорий случайно исчезли из-за рендера то удаляю из монго чтобы нейронка работала без траблов
  console.log(imglist)
   res.render('page/detect.ejs', {activePage: "detect", user: user ? user : null, error: null, imglist:imglist})
 })
