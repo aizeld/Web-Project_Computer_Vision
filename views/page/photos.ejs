@@ -71,7 +71,7 @@
                         <a class="link"> <%= img %></a> <!-- Changed span to a tag -->
                     </div>
                     <div>
-                        <a class="btn btn-sm btn-outline-secondary editPhotoBtn" data-bs-toggle="modal"  data-img="<%= encodeURIComponent(img) %>"data-bs-target="#editPhotosModal">
+                        <a class="btn btn-sm btn-outline-secondary editPhotoBtn" data-bs-toggle="modal"  data-img="<%= img %>"data-bs-target="#editPhotosModal">
                             Edit
                         </a>
                         <a href="/deletePhoto?imageName=<%= encodeURIComponent(img) %>" class="btn btn-sm btn-outline-danger">Delete</a> <!-- Changed delete link to a GET request -->
@@ -88,7 +88,7 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="addPhotosModalLabel">Add Photos and Numberate each photo by 1.jpg 2.jpg 3.jpg</h5>
+                    <h5 class="modal-title" id="addPhotosModalLabel">Add Photos and extension should be only JPG!</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">

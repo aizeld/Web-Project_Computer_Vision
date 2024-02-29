@@ -7,7 +7,7 @@ const { UserCollection, WeatherLogCollection, UserCurrentCollection, imgCollecti
 const app = express();
 const {getTimeCurrent } = require('./helper');
 const bcrypt = require('bcrypt');
-
+const fsPromises = require('fs').promises;
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -29,22 +29,22 @@ var upload = multer({
 app.get('/deletePhoto', async (req, res) => {
   const imageName = req.query.imageName;
   try {
-      // Delete the image name from the imgs array using $pull operator
+      
       const result = await imgCollection.updateOne({}, { $pull: { imgs: imageName } });
 
       if (result) {
           console.log(`Deleted image: ${imageName}`);
-          // Delete the directory
+       
           const directoryPath = path.join(__dirname, 'public', 'img', imageName);
           fs.rmdirSync(directoryPath, { recursive: true });
-          res.redirect('/photos'); // Redirect back to the original page after deletion
+          res.redirect('/photos');
       } else {
           console.log(`Image '${imageName}' not found in collection`);
           res.status(404).send(`Image '${imageName}' not found in collection`);
       }
   } catch (error) {
       console.error('Error deleting image:', error);
-      res.status(500).send('Error deleting image'); // Send an error response if deletion fails
+      res.status(500).send('Error deleting image'); 
   }
 });
 
@@ -68,82 +68,83 @@ app.get("/photos", async (req, res) =>{
 
 
 
-app.post('/addPhotos', upload.array('photos', 3), (req, res) => {
-
-
+app.post('/addPhotos', upload.array('photos', 3), async (req, res) => {
   const directoryName = req.body.directoryName;
   console.log(directoryName)
-  
-  // Create directory if it doesn't exist
+
   const directoryPath = path.join(__dirname, 'public', 'img', directoryName);
   if (!fs.existsSync(directoryPath)) {
       fs.mkdirSync(directoryPath, { recursive: true });
   }
 
-  // Move uploaded files to the new directory
-  req.files.forEach(file => {
-      fs.renameSync(file.path, path.join(directoryPath, file.originalname));
-  });
+  for (let i = 0; i < req.files.length; i++) {
+      const file = req.files[i];
+      const newName = `${i + 1}.jpg`; 
+      const newPath = path.join(directoryPath, newName);
+      fs.renameSync(file.path, newPath);
+  }
 
-  imgCollection.findOneAndUpdate(
-    {}, // Find the first document in the collection (assuming there's only one document)
-    { $addToSet: { imgs: directoryName } }, // Add directoryName to the imgs array
-    { upsert: true, new: true } // Create the document if it doesn't exist, and return the updated document
-)
-.then(updatedDoc => {
-    console.log('Directory name added to array in MongoDB:', updatedDoc);
-    res.redirect("/photos")
-})
-.catch(error => {
-    console.error('Error adding directory name to array in MongoDB:', error);
-    res.status(500).send('Error uploading photos');
-});
-
- 
-});
-app.post('/updatePhoto', upload.array('editPhotos', 3), async (req, res) => {
   try {
-    console.log(req.body)
-    const oldDirectoryName = req.body.oldDirectoryName;
-    const directoryName = req.body.editDirectoryName;
-    console.log(oldDirectoryName)
-    console.log(directoryName)
-    
-    // Construct old and new directory paths
-    const oldDirectoryPath = path.join(__dirname, 'public', 'img', oldDirectoryName);
-    const newDirectoryPath = path.join(__dirname, 'public', 'img', directoryName);
 
-    // Rename the directory if the name is changed
-    if (oldDirectoryName !== directoryName) {
-      fs.renameSync(oldDirectoryPath, newDirectoryPath);
-    }
-
-    // Move uploaded files to the new directory
-    req.files.forEach(file => {
-      fs.renameSync(file.path, path.join(newDirectoryPath, file.originalname));
-    });
-
-    // Update the directory name in the database
-    await imgCollection.updateOne(
-      { imgs: oldDirectoryName }, // Find the document containing the old directory name
-      { $set: { "imgs.$": directoryName } } // Update the directory name in the imgs array
-    );
-
-    console.log('Photos updated successfully');
-    res.redirect("/photos");
+      const updatedDoc = await imgCollection.findOneAndUpdate(
+          {},
+          { $addToSet: { imgs: directoryName } },
+          { upsert: true, new: true }
+      );
+      console.log('Directory name added to array in MongoDB:', updatedDoc);
+      res.redirect("/photos");
   } catch (error) {
-    console.error('Error updating photos:', error);
-    res.status(500).send('Error updating photos');
+      console.error('Error adding directory name to array in MongoDB:', error);
+      res.status(500).send('Error uploading photos');
   }
 });
 
+
+app.post('/updatePhoto', upload.array('editPhotos', 3), async (req, res) => {
+  try {
+      console.log(req.body);
+      const oldDirectoryName = req.body.oldDirectoryName;
+      const newDirectoryName = req.body.editDirectoryName;
+      console.log(oldDirectoryName);
+      console.log(newDirectoryName);
+      
+      // Construct old and new directory paths
+      const oldDirectoryPath = path.join(__dirname, 'public', 'img', oldDirectoryName);
+      const newDirectoryPath = path.join(__dirname, 'public', 'img', newDirectoryName);
+      // меняю название директорий
+      if (oldDirectoryName !== newDirectoryName) {
+          fs.renameSync(oldDirectoryPath, newDirectoryPath);
+      }
+
+     //меняю название фоток на 1.жпг 2.жпг 3.жпг
+      req.files.forEach((file, index) => {
+          const newFileName = `${index + 1}.jpg`;
+          fs.renameSync(file.path, path.join(newDirectoryPath, newFileName));
+      });
+
+      // меняю имя в монго
+      await imgCollection.updateOne(
+          { imgs: oldDirectoryName },
+          { $set: { "imgs.$": newDirectoryName } } 
+      );
+
+      console.log('Photos updated successfully');
+      res.redirect("/photos");
+  } catch (error) {
+      console.error('Error updating photos:', error);
+      res.status(500).send('Error updating photos');
+  }
+});
 
 
 app.get("/detect", async (req, res)=>{
   const user = await getUser(req.ip)
   const img = await imgCollection.findOne({}); 
   
- const imglist = img ? img.imgs : [];
+ let imglist = img ? img.imgs : []
+ if (imglist.length === 0) {
+  imglist = ["Sozdatel"];
+}
  console.log(imglist)
   res.render('page/detect.ejs', {activePage: "detect", user: user ? user : null, error: null, imglist:imglist})
 })
