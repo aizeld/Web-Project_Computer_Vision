@@ -58,8 +58,8 @@ app.get("/photos", async (req, res) =>{
                         .map(dirent => dirent.name);
 
   console.log("Local directories: ", directories)
-
- const imglist = img ? img.imgs : [];
+ var imglist = img ? img.imgs : [];
+ imglist = imglist.filter(directory => directories.includes(directory));
   res.render('page/photos.ejs', {activePage: "photo", user: user ? user : null, error: null, imglist:imglist})
 })
 
@@ -145,6 +145,11 @@ app.get("/detect", async (req, res)=>{
  if (imglist.length === 0) {
   imglist = ["Sozdatel"];
 }
+const directoryPath = path.join(__dirname, 'public', 'img');
+  const directories = fs.readdirSync(directoryPath, { withFileTypes: true })
+                        .filter(dirent => dirent.isDirectory())
+                        .map(dirent => dirent.name);
+imglist = imglist.filter(directory => directories.includes(directory));//смотрю если директорий случайно исчезли из-за рендера то удаляю из монго чтобы нейронка работала без траблов
  console.log(imglist)
   res.render('page/detect.ejs', {activePage: "detect", user: user ? user : null, error: null, imglist:imglist})
 })

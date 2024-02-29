@@ -58,7 +58,7 @@ video.addEventListener("play",async ()=>{
 
 
 function getLabeledImgs(){
-    // labels = ["Mike Tyson", "Asylkhan", "Conor", "AdilShiz", "Aslan", "Batyr", "Dias", "Kaifarik", "Musrik", "PHP eber", "RomanPedik", "Sara", "Vadya", "Yelnur"]
+   
     
     return Promise.all(
         labels.map(async label =>{
