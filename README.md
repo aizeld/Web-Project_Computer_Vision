@@ -5,7 +5,9 @@ password: 123
 
 # Computer Vision 
 In this project i used Computer Vision, where you can put 3 of your images and get recognized in live camera as well as emotions.
+
 Try it right now!!! https://assignment4-1-vs09.onrender.com/
+
 It might take some time (about 30-40sec) to load this project, because it was probably off and reloading right now
 
 
@@ -32,14 +34,10 @@ Before running this application, you need to have the following:
 
 1. Clone this repository:
 
-   ```bash
-   git clone https://github.com/your-username/weather-news-app.git
+   git clone https://github.com/aizeld/assignment4.git
+     
 
-    Navigate to the project directory:
-
-    bash
-
-cd weather-news-app
+cd assignment4
 
 Install dependencies:
 
